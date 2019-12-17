@@ -1,5 +1,4 @@
 library(spatstat)
-library(tictoc)
 library(stats)
 library(foreach)
 library(doSNOW)
