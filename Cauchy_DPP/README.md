@@ -1,0 +1,1 @@
+Datasets of 2000 simulations of Cauchy-type DPPs with parameters lambda=100, nu=0.5, alpha=0.005, 0.02 or 0.035 and window either [0,1]^2, [0,2]^2 or [0,3]^2. They have all been generated with the R package "spatstats".
