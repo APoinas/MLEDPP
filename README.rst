@@ -15,7 +15,21 @@ Instructions
 Syntax
 ~~~~~~
 
-TO BE COMPLETED
+The full syntax of the MLEDPP function is the following
+
+MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Trunc=50)
+
+The main parameters are:
+
+- ppp 
+- DPPfamily
+
+The additional parameters are:
+
+- startpar
+- sigma
+- edgecorr
+- Trunc 
 
 Dependencies
 ~~~~~~~~~~~~
@@ -23,13 +37,12 @@ Dependencies
 This project depends on the following packages:
 
 -  `Spatstats <https://github.com/spatstat/spatstat>`__
--  `stats`__
--  `Matplotlib httpmatplotlib.org`__
+-  stats
 
 The following dependencies are optional, and only needed for parallelizing the task of testing the
 performance of the various estimators on DPPs that we consider.
 
--  `foreach`__
--  `doSNOW`__
--  `parallel`__
+-  foreach
+-  doSNOW
+-  parallel
 
