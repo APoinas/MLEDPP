@@ -198,7 +198,7 @@ c(10^4*mean((T_MLE_corr-alpha0)^2), 10^4*mean((T_MLE-alpha0)^2), 10^4*mean((T_pc
 
 #Saving data
 all_data = data.frame(MLE_not_corrected = T_MLE, MLE_corrected = T_MLE_corr , MCE_with_g = T_pcf , MCE_with_K = T_K)
-saveRDS(all_data ,paste("results/Result_Gauss_", toString(alpha0*1000), "e-3_[0_", toString(S_length), "].dat", sep=""))
+saveRDS(all_data ,paste("results/Result_Cauchy_", toString(alpha0*1000), "e-3_[0_", toString(S_length), "].dat", sep=""))
 
 #####Whittle-Matérn#####
 rho0 = 100
