@@ -1,1 +1,0 @@
-Datasets of 2000 simulations of Gaussian-type DPPs with parameters lambda=100, alpha=0.01, 0.03 or 0.05 and window either [0,1]^2, [0,2]^2 or [0,3]^2. They have all been generated with the R package "spatstats".
