@@ -1,8 +1,8 @@
 Asymptotic approximation of the MLE of DPPs
 ===========================================
 
-R code accompanying the paper `Asymptotic approximation of the 
-likelihood of stationary determinantal point processes <https://arxiv.org/abs/2103.02310>`_ with 
+R code accompanying the paper `Asymptotic approximation of the likelihood of 
+stationary determinantal point processes <https://arxiv.org/abs/2103.02310>`_ with 
 `Frederic Lavancier <https://github.com/lavancier-f>`_.
 
 The file "MLE_DPP.R" contains the main function computing the asymptotic approximation of the MLE
@@ -26,10 +26,18 @@ The main arguments are:
 
 The additional arguments are:
 
-- startpar -> Initial value of alpha used in the optimization procedure. By default it is alpha_max/2 where alpha_max is the highest value of alpha for which the DPP is well-defined.
+- startpar -> Optional. Initial value of alpha used in the optimization procedure. By default it is alpha_max/2 where alpha_max is the highest value of alpha for which the DPP is well-defined.
 - sigma -> Must be specified for "Whittle-Matern" families only. The shape parametric of the family (called nu in `dppMatern <https://rdrr.io/cran/spatstat.core/man/dppMatern.html>`__)
-- edgecorr -> Logical. If 'TRUE' and the observation window is rectangular, it computes the periodic edge correction. If 'TRUE' and the observation window isn't rectangular, it computes the experimental edge correction described in Section 5.3 in our paper.
-- Trunc -> Truncation used for the computation of L_0 for all DPP families except Bessel.
+- edgecorr -> Logical. If 'TRUE' and the observation window is rectangular, it computes the periodic edge correction. If 'TRUE' and the observation window isn't rectangular, it computes the experimental edge correction described in Section 5.3 of our paper.
+- Trunc -> Optional. Truncation used for the computation of L_0 for all DPP families except Bessel.
+
+The function returns an object of class "detpointprocfamily" corresponding to the DPP family fitted
+on the observed point pattern by the asymptotic approximation of the maximum likelihood estimator.
+
+Limitations
+~~~~~~~~~~~
+
+TO BE COMPLETED
 
 Dependencies
 ~~~~~~~~~~~~
