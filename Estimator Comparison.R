@@ -6,7 +6,7 @@ library(foreach)
 library(doSNOW)
 library(parallel)
 
-source("MLE_DPP.R")
+source("MLE_DPP.R") #Load the DPP function, make sure it is in the working directory.
 
 ###############################Exemples of using the function MLEDPP#################################
 #####On a rectangular window#####
