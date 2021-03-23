@@ -37,7 +37,7 @@ on the observed point pattern by the asymptotic approximation of the maximum lik
 Limitations
 ~~~~~~~~~~~
 
-TO BE COMPLETED
+Currently, the approximated MLE is coded for stationnary DPPs on any window of R^2 with either a Gaussian-type kernel, a Bessel-type kernel with sigma=0, a Cauchy-type kernel with nu=1/2 or a Whittle-Matern-type kernel with a fixed shape parameter.
 
 Dependencies
 ~~~~~~~~~~~~
