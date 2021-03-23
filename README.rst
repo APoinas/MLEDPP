@@ -26,12 +26,9 @@ The main arguments are:
 
 The additional arguments are:
 
-- startpar -> Initial value of alpha used in the optimization procedure. By default it is alpha_max/2 where alpha_max is the
-highest value of alpha for which the DPP is well-defined.
-- sigma -> Must be specified for "Whittle-Matern" families only. The shape parametric of the family (called nu in `dppMatern 
-<https://rdrr.io/cran/spatstat.core/man/dppMatern.html>`__)
-- edgecorr -> Logical. If 'TRUE' and the observation window is rectangular, it computes the periodic edge correction. If 'TRUE'
-and the observation window isn't rectangular, it computes the experimental edge correction described in Section 5.3 in our paper.
+- startpar -> Initial value of alpha used in the optimization procedure. By default it is alpha_max/2 where alpha_max is the highest value of alpha for which the DPP is well-defined.
+- sigma -> Must be specified for "Whittle-Matern" families only. The shape parametric of the family (called nu in `dppMatern <https://rdrr.io/cran/spatstat.core/man/dppMatern.html>`__)
+- edgecorr -> Logical. If 'TRUE' and the observation window is rectangular, it computes the periodic edge correction. If 'TRUE' and the observation window isn't rectangular, it computes the experimental edge correction described in Section 5.3 in our paper.
 - Trunc -> Truncation used for the computation of L_0 for all DPP families except Bessel.
 
 Dependencies
