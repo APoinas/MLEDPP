@@ -61,7 +61,7 @@ MLEDPP(S, "Gauss", edgecorr=TRUE)
 ###############################Comparison between estimators#################################
 #####Gauss#####
 rho0 = 100
-alpha0 = 0.03
+alpha0 = 0.05
 S_length = 1
 nb_core = 7
 n = 500
@@ -108,14 +108,15 @@ saveRDS(all_data ,paste("results/Result_Gauss_", toString(alpha0*100), "e-2_[0_"
 
 #####Bessel#####
 rho0 = 100
-alpha0 = 0.03
-S_length = 1
+alpha0 = 0.05
+S_length = 2
 nb_core = 7
 n = 500
 Simu = readRDS(paste("datasets/2000_Bessel_",toString(rho0),"_",toString(alpha0*100),"e-2_[0_",toString(S_length),"].dat",sep=""))
 
 #MCE with the pcf
-T_pcf = unlist(unname(mclapply(Simu[1:n], function(x) dppm(x~1, dppBessel(sigma=0), method="mincon", statistic="pcf", statargs=list(divisor='d'), rmin=0.01, q=1/2)$fitted$fixedpar$alpha, mc.cores=nb_core)))
+#T_pcf = unlist(unname(mclapply(Simu[1:n], function(x) dppm(x~1, dppBessel(sigma=0), method="mincon", statistic="pcf", statargs=list(divisor='d'), rmin=0.01, q=1/2)$fitted$fixedpar$alpha, mc.cores=nb_core)))
+T_pcf = unlist(unname(mclapply(Simu[1:n], function(x) dppm(x~1, dppBessel(sigma=0), method="mincon", statistic="pcf", rmin=0.01, q=1/2)$fitted$fixedpar$alpha, mc.cores=nb_core)))
 
 #MCE with K
 T_K = unlist(unname(mclapply(Simu[1:n], function(x) dppm(x~1, dppBessel(sigma=0), method="mincon", statistic="K", rmin=0.01, q=1/2)$fitted$fixedpar$alpha, mc.cores=nb_core)))
@@ -305,7 +306,7 @@ for (wind in c(1,2,3)){
     cat('--------------------------------------------------------\n')
     cat(paste("Mean square Errror (x10^4) for alpha=", alpha/100, " and window=[0,", wind, "]^2\n", sep=""))
     print(10^4 * colMeans((T-alpha/100)^2))
-    abline(h=0, col="red", lty=2, lwd=thiccc)
+    abline(h=0, col="red", lty=2, lwd=lwd)
     axis(2, cex.axis=caxis)}}
 
 #Bessel
@@ -321,7 +322,7 @@ for (wind in c(1,2,3)){
     cat('--------------------------------------------------------\n')
     cat(paste("Mean square Errror (x10^4) for alpha=", alpha/100, " and window=[0,", wind, "]^2\n", sep=""))
     print(10^4 * colMeans((T-alpha/100)^2))
-    abline(h=0, col="red", lty=2, lwd=thiccc)
+    abline(h=0, col="red", lty=2, lwd=lwd)
     axis(2, cex.axis=caxis)}}
 
 #Cauchy
@@ -337,7 +338,7 @@ for (wind in c(1,2,3)){
     cat('--------------------------------------------------------\n')
     cat(paste("Mean square Errror (x10^4) for alpha=", alpha/1000, " and window=[0,", wind, "]^2\n", sep=""))
     print(10^4 * colMeans((T-alpha/1000)^2))
-    abline(h=0, col="red", lty=2, lwd=thiccc)
+    abline(h=0, col="red", lty=2, lwd=lwd)
     axis(2, cex.axis=caxis)}}
 
 #Whittle-Matérn
@@ -353,5 +354,5 @@ for (wind in c(1,2)){
   cat('--------------------------------------------------------\n')
   cat(paste("Mean square Errror (x10^4) for alpha=", alpha/1000, " and window=[0,", wind, "]^2\n", sep=""))
   print(10^4 * colMeans((T-alpha/1000)^2))
-  abline(h=0, col="red", lty=2, lwd=thiccc)
+  abline(h=0, col="red", lty=2, lwd=lwd)
   axis(2, cex.axis=caxis)}

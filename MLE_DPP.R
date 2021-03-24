@@ -38,7 +38,8 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     alphamax = sqrt(1/(pi*rho_est)) #Max value of alpha
     
     #Function corresponding to L_0^{rho,alpha}(r). Nsum is the truncation parameter.
-    Lker = function(rho, alpha, r, Nsum){
+    Lker = function(rho, alpha, r, Max_trunc){
+      Nsum = min(Max_trunc, 1 + ceiling(log(0.0001)/log(rho*pi*alpha^2)))
       d = dim(r)[1]
       bigM = array(rep(0, d*d), dim=c(d,d))
       for (i in 1:Nsum){
@@ -49,16 +50,16 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     
     
     if(edgecorr & Win$type != "rectangle"){
-      Nmax = Lker(rho_est, alphamax, M, Nsum=Trunc)
+      Nmax = Lker(rho_est, alphamax, M, Max_trunc=Trunc)
       M = newM.nonrectangular_edgecorrection(Nmax, M, bdist)
     }
       
      
     
     #Approximate log-likelihood of Gauss-type DPPs
-    Log_Likelihood = function(rho,alpha,M,vol,Nsum){
+    Log_Likelihood = function(rho,alpha,M,vol,Max_trunc){
       if (rho*pi*alpha^2 >= 1) {return(NA)}
-      N = Lker(rho,alpha,M,Nsum)
+      N = Lker(rho,alpha,M,Max_trunc)
       temp = determinant(N,logarithm=TRUE)
       if(temp$sign == -1){return(NA)} #Returns NA if the determinant in the stochastic part of the log-likelihood is negative.
       a = integrate(function(r) 2*pi*r*log(1-rho*pi*alpha^2*exp(-(pi*alpha*r)^2)),0,Inf)$value+(1/vol)*temp$modulus[1]
@@ -70,7 +71,8 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     alphamax = sqrt(1/(2*pi*rho_est)) #Max value of alpha
     
     #Function corresponding to L_0^{rho,alpha}(r). Nsum is the truncation parameter.
-    Lker = function(rho, alpha, r, Nsum){
+    Lker = function(rho, alpha, r, Max_trunc){
+      Nsum = min(Max_trunc, 1 + ceiling(log(0.0001)/log(2*rho*pi*alpha^2)))
       d = dim(r)[1]
       bigM = array(rep(0, d*d), dim=c(d,d))
       for (i in 1:Nsum){
@@ -80,15 +82,16 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     }
     
     if(edgecorr & Win$type != "rectangle"){
-      Nmax = Lker(rho_est, alphamax, M, Nsum=Trunc)
+      Nmax = Lker(rho_est, alphamax, M, Max_trunc=Trunc)
       M = newM.nonrectangular_edgecorrection(Nmax, M, bdist)
     }
     
     
     #Approximate log-likelihood of Cauchy-type DPPs
-    Log_Likelihood = function(rho, alpha, M, vol, Nsum){
+    Log_Likelihood = function(rho, alpha, M, vol, Max_trunc){
       if (2*rho*pi*alpha^2 >= 1) {return(NA)}
-      N = Lker(rho, alpha, M, Nsum)
+      Nsum = min(Max_trunc, 1 + ceiling(log(0.0001)/log(2*rho*pi*alpha^2)))
+      N = Lker(rho, alpha, M, Max_trunc)
       temp = determinant(N,logarithm=TRUE)
       if(temp$sign == -1){return(NA)} #Returns NA if the determinant in the stochastic part of the log-likelihood is negative.
       a=-rho*sum((2*rho*pi*alpha^2)^(1:Nsum-1)/(1:Nsum)^3)+(1/vol)*temp$modulus[1]
@@ -110,7 +113,7 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     
     
     #Approximate log-likelihood of Bessel-type DPPs
-    Log_Likelihood = function(rho,alpha,M,vol,Nsum=NULL){
+    Log_Likelihood = function(rho,alpha,M,vol,Max_trunc=NULL){
       if (rho*pi*alpha^2 >= 1) {return(NA)}
       N = (besselJ(2*M/alpha,1)/(M/alpha))*rho/(1-rho*pi*alpha^2)
       for (i in 1:sqrt(length(M))){
@@ -128,7 +131,8 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     alphamax = sqrt(1/(pi*rho_est*4*sigma)) #Max value of alpha
     
     #Function corresponding to L_0^{rho,alpha}(r). Nsum is the truncation parameter.
-    Lker = function(rho,alpha,r,Nsum){
+    Lker = function(rho,alpha,r,Max_trunc){
+      Nsum = min(Max_trunc, 1 + ceiling(log(0.0001)/log(4*rho*pi*sigma*alpha^2)))
       d = dim(r)[1]
       bigM = array(rep(0, d*d), dim=c(d,d))
       for (i in 1:Nsum){
@@ -138,15 +142,16 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     }
     
     if(edgecorr & Win$type != "rectangle"){
-      Nmax = Lker(rho_est,alphamax,M,Nsum=Trunc)
-      M = newM.nonrectangular_edgecorrection(Nmax,M,bdist)
+      Nmax = Lker(rho_est, alphamax, M, Max_trunc=Trunc)
+      M = newM.nonrectangular_edgecorrection(Nmax, M, bdist)
     }
     
     
     #Approximate log-likelihood of Whittle-Matern-type DPPs
-    Log_Likelihood = function(rho, alpha, M, vol, Nsum=NULL){
+    Log_Likelihood = function(rho, alpha, M, vol, Max_trunc=NULL){
       if (4*rho*pi*sigma*alpha^2 >= 1) {return(NA)}
-      N = Lker(rho, alpha, M, Nsum)
+      Nsum = min(Max_trunc, 1 + ceiling(log(0.0001)/log(4*rho*pi*sigma*alpha^2)))
+      N = Lker(rho, alpha, M, Max_trunc)
       diagN = rho*sigma*sum((4*rho*pi*alpha^2*sigma)^(1:Nsum-1)/((sigma+1)*(1:Nsum)-1))
       diag(N) = diagN
       temp = determinant(N, logarithm=TRUE)
@@ -162,7 +167,7 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
   if (startpar > alphamax | startpar < 0){stop("Starting paramater not in range")}
   
   #Estimation of alpha by the maximum of the approximate log-likelihood
-  alpha_est = optim(par=startpar, fn=Log_Likelihood, M=M,vol=vol,Nsum=Trunc, rho=rho_est, lower=alphamax/1000, upper=alphamax, method="Brent")$par
+  alpha_est = optim(par=startpar, fn=Log_Likelihood, M=M, vol=vol, Max_trunc=Trunc, rho=rho_est, lower=alphamax/1000, upper=alphamax, method="Brent")$par
   
   DPPfam$fixedpar$lambda = rho_est
   DPPfam$fixedpar$alpha = alpha_est
