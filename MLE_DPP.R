@@ -39,7 +39,7 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     
     #Function corresponding to L_0^{rho,alpha}(r). Nsum is the truncation parameter.
     Lker = function(rho, alpha, r, Max_trunc){
-      Nsum = min(Max_trunc, 1 + ceiling(log(0.0001)/log(rho*pi*alpha^2)))
+      Nsum = min(Max_trunc, 1 + abs(ceiling(log(0.0001)/log(rho*pi*alpha^2))))
       d = dim(r)[1]
       bigM = array(rep(0, d*d), dim=c(d,d))
       for (i in 1:Nsum){
@@ -72,7 +72,7 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     
     #Function corresponding to L_0^{rho,alpha}(r). Nsum is the truncation parameter.
     Lker = function(rho, alpha, r, Max_trunc){
-      Nsum = min(Max_trunc, 1 + ceiling(log(0.0001)/log(2*rho*pi*alpha^2)))
+      Nsum = min(Max_trunc, 1 + abs(ceiling(log(0.0001)/log(2*rho*pi*alpha^2))))
       d = dim(r)[1]
       bigM = array(rep(0, d*d), dim=c(d,d))
       for (i in 1:Nsum){
@@ -90,7 +90,7 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     #Approximate log-likelihood of Cauchy-type DPPs
     Log_Likelihood = function(rho, alpha, M, vol, Max_trunc){
       if (2*rho*pi*alpha^2 >= 1) {return(NA)}
-      Nsum = min(Max_trunc, 1 + ceiling(log(0.0001)/log(2*rho*pi*alpha^2)))
+      Nsum = min(Max_trunc, 1 + abs(ceiling(log(0.0001)/log(2*rho*pi*alpha^2))))
       N = Lker(rho, alpha, M, Max_trunc)
       temp = determinant(N,logarithm=TRUE)
       if(temp$sign == -1){return(NA)} #Returns NA if the determinant in the stochastic part of the log-likelihood is negative.
@@ -132,7 +132,7 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     
     #Function corresponding to L_0^{rho,alpha}(r). Nsum is the truncation parameter.
     Lker = function(rho,alpha,r,Max_trunc){
-      Nsum = min(Max_trunc, 1 + ceiling(log(0.0001)/log(4*rho*pi*sigma*alpha^2)))
+      Nsum = min(Max_trunc, 1 + abs(ceiling(log(0.0001)/log(4*rho*pi*sigma*alpha^2))))
       d = dim(r)[1]
       bigM = array(rep(0, d*d), dim=c(d,d))
       for (i in 1:Nsum){
@@ -150,7 +150,7 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     #Approximate log-likelihood of Whittle-Matern-type DPPs
     Log_Likelihood = function(rho, alpha, M, vol, Max_trunc=NULL){
       if (4*rho*pi*sigma*alpha^2 >= 1) {return(NA)}
-      Nsum = min(Max_trunc, 1 + ceiling(log(0.0001)/log(4*rho*pi*sigma*alpha^2)))
+      Nsum = min(Max_trunc, 1 + abs(ceiling(log(0.0001)/log(4*rho*pi*sigma*alpha^2))))
       N = Lker(rho, alpha, M, Max_trunc)
       diagN = rho*sigma*sum((4*rho*pi*alpha^2*sigma)^(1:Nsum-1)/((sigma+1)*(1:Nsum)-1))
       diag(N) = diagN

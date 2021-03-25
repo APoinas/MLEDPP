@@ -250,13 +250,12 @@ saveRDS(all_data ,paste("results/Result_Matern_", toString(alpha0*1000), "e-3_[0
 #####On an R-shaped window#####
 rho0 = 100
 alpha0 = 0.05
-S_length = 1
 nb_core = 7
-n = 100
-Simu = readRDS(paste("datasets/100_Gauss_", toString(alpha0*100), "e-2_letterR.dat", sep=""))
+n = 500
+Simu = readRDS(paste("datasets/500_Gauss_", toString(alpha0*100), "e-2_letterR.dat", sep=""))
 
 #MCE with the pcf
-T_pcf = unlist(unname(mclapply(Simu[1:n], function(x) dppm(x~1, dppGauss, method="mincon", statistic="pcf", statargs=list(divisor='d'), rmin=0.01, q=1/2)$fitted$fixedpar$alpha, mc.cores=nb_core)))
+T_pcf = unlist(unname(mclapply(Simu[1:n], function(x) dppm(x~1, dppGauss, method="mincon", statistic="pcf", rmin=0.01, q=1/2)$fitted$fixedpar$alpha, mc.cores=nb_core)))
 
 #MCE with K
 T_K = unlist(unname(mclapply(Simu[1:n], function(x) dppm(x~1, dppGauss, method="mincon", statistic="K", rmin=0.01, q=1/2)$fitted$fixedpar$alpha, mc.cores=nb_core)))
@@ -290,6 +289,9 @@ abline(h=0, col="red", lty=2)
 #Mean square errors
 c(10^4*mean((T_MLE_corr-alpha0)^2), 10^4*mean((T_MLE-alpha0)^2), 10^4*mean((T_pcf-alpha0)^2), 10^4*mean((T_K-alpha0)^2))
 
+#Saving data
+all_data = data.frame(MLE_not_corrected = T_MLE, MLE_corrected = T_MLE_corr , MCE_with_g = T_pcf , MCE_with_K = T_K)
+saveRDS(all_data ,paste("results/Result_Gauss_", toString(alpha0*100), "e-2_letterR.dat", sep=""))
 ##############################################Plotting all results##########################################################
 
 #Gauss
@@ -353,5 +355,20 @@ for (wind in c(1,2)){
   cat('--------------------------------------------------------\n')
   cat(paste("Mean square Errror (x10^4) for alpha=", alpha/1000, " and window=[0,", wind, "]^2\n", sep=""))
   print(10^4 * colMeans((T-alpha/1000)^2))
+  abline(h=0, col="red", lty=2, lwd=lwd)
+  axis(2, cex.axis=caxis)}
+
+#Gauss (R-shaped window)
+par(mfrow=c(1,3), mar=c(1, 2.5, 2, 1))
+cmain = 2.5
+caxis = 1.5
+lwd = 1.5
+for (alpha in c(1,3,5)){
+  titletext = bquote(alpha*"*="*.(alpha/100)*""~"")
+  T = readRDS(paste("results/Result_Gauss_", alpha, "e-2_letterR.dat", sep=""))
+  boxplot(T-alpha/100,yaxt="n", cex.main=cmain, main=titletext, xaxt="n", lwd=lwd)
+  cat('--------------------------------------------------------\n')
+  cat(paste("Mean square Errror (x10^4) for alpha=", alpha/100, "\n", sep=""))
+  print(10^4 * colMeans((T-alpha/100)^2))
   abline(h=0, col="red", lty=2, lwd=lwd)
   axis(2, cex.axis=caxis)}
