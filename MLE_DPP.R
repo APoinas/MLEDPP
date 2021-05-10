@@ -1,7 +1,7 @@
 library(spatstat)
 library(stats)
 
-###############################General MLE function################################
+############################### General MLE function ################################
 
 MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Trunc=50){
   if (!is.ppp(ppp)){
@@ -14,8 +14,6 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
   
   Win = ppp$window #Observation window
   vol = area(Win) #Area of the observation window
-  
-  
   
   #Estimation of the intensity
   rho_est = ppp$n/vol
@@ -175,6 +173,7 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
   return(DPPfam)
 }
 
+##### (Experimental) Edge correction for non-rectangular windows #####
 
 newM.nonrectangular_edgecorrection = function(Nmax, M, bdist){
   l = dim(M)[1]
@@ -208,3 +207,5 @@ newM.nonrectangular_edgecorrection = function(Nmax, M, bdist){
   }
   return(Mnew)
 }
+
+##### (Experimental) Variance estimation using Fisher's information matrix #####
