@@ -1,5 +1,0 @@
-
-Pour les programmes, je propose que tu ne touches pas à Github pour le moment (si un référé est en train de regarder et qu’il voit que ca bouge, il risque de ne pas apprécier). Par contre, on metttra bien à jour pour la révision (ou le rejet) de notre article. Donc si tu as le temps, tu peux préparer l’update en local. Si j’ai bien suivi, il faudrait :
-- ajouter la troncation
-- modifier le r_max dans la correction non-rectangulaire
-- ajouter l’estimation de la variance avec un warning dans les cas où elle n’est pas fiable
