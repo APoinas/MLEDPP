@@ -20,13 +20,13 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
     
   #Generating the distance matrix
   if (!edgecorr){
-    M=as.matrix(dist(t(rbind(ppp$x, ppp$y)), method = "euclidean", diag = TRUE, upper = TRUE, p = 2))}
+    M = as.matrix(dist(t(rbind(ppp$x, ppp$y)), method = "euclidean", diag = TRUE, upper = TRUE, p = 2))}
   else {
     if (Win$type == "rectangle") {M=pairdist(ppp, periodic=TRUE)}
     else {  
       warning("Edge correction is experimental for non rectangular windows.")
-      bdist=bdist.points(ppp)
-      M=as.matrix(dist(t(rbind(ppp$x, ppp$y)), method = "euclidean", diag = TRUE, upper = TRUE, p = 2)) #M is modified below, depending on the family
+      bdist = bdist.points(ppp)
+      M = as.matrix(dist(t(rbind(ppp$x, ppp$y)), method = "euclidean", diag = TRUE, upper = TRUE, p = 2)) #M is modified below, depending on the family
     }
   }
   
@@ -52,8 +52,6 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
       M = newM.nonrectangular_edgecorrection(Nmax, M, bdist)
     }
       
-     
-    
     #Approximate log-likelihood of Gauss-type DPPs
     Log_Likelihood = function(rho,alpha,M,vol,Max_trunc){
       if (rho*pi*alpha^2 >= 1) {return(NA)}
@@ -209,3 +207,51 @@ newM.nonrectangular_edgecorrection = function(Nmax, M, bdist){
 }
 
 ##### (Experimental) Variance estimation using Fisher's information matrix #####
+
+Fisher_Info = function(ppp, DPPfamily, alpha_est, edgecorr=FALSE, Max_Trunc=50){
+  if (DPPfamily == "WM" | DPPfamily == "Whittle-Matern"){
+    stop('Fisher information not implemented for the Whittle-Matern family')}
+  
+  #Loading the functions giving the derivatives of the log-likelihood
+  File_with_LL_derivatives = paste("LL_derivatives/", DPPfamily, ".R", sep="")
+  if (file.exists(File_with_LL_derivatives)){
+    source(File_with_LL_derivatives)
+  } else {
+    stop('Files with the log likelihood derivatives not found. Make sure you are in the right working directory.')
+  }
+  
+  #Estimated parameters
+  vol = area(ppp$window)
+  rho = ppp$n / vol
+  alpha = alpha_est
+  
+  #Generating the distance matrix
+  if (!edgecorr){
+    M = as.matrix(dist(t(rbind(ppp$x, ppp$y)), method = "euclidean", diag = TRUE, upper = TRUE, p = 2))}
+  else {
+    if (Win$type == "rectangle") {M = pairdist(ppp, periodic=TRUE)}
+    else {  
+      stop('Edge correction for the Fisher information matrix not implemented for non-rectangular windows.')
+    }
+  }
+  
+  #Loading the various quantities used in the derivatives of the log-likelihood
+  N = L0(rho,alpha,M)
+  DalpN = DalpL0(rho,alpha,M)
+  DrhoN = DrhoL0(rho,alpha,M)
+  D2alpN = D2alpL0(rho,alpha,M)
+  D2rhoN = D2rhoL0(rho,alpha,M)
+  DalpDrhoN = DalpDrhoL0(rho,alpha,M)
+  invN = solve(N)
+  tempmat_alpha = DalpN %*% invN
+  tempmat_rho = DrhoN %*% invN
+  
+  #2nd derivative of the log-likelihood with respect to rho
+  D2rhoLL = vol * D2rhoInteg(rho,alpha) + sum(D2rhoN * invN) - sum(tempmat_rho * t(tempmat_rho))
+  #Derivative of the log-likelihood with respect to rho and alpha
+  DalpDrhoLL = vol * DalpDrhoInteg(rho,alpha) + sum(DalpDrhoN * invN) - sum(tempmat_alpha * t(tempmat_rho))
+  #2nd derivative of the log-likelihood with respect to alpha
+  D2alpLL = vol * D2alpInteg(rho,alpha) + sum(D2alpN * invN) - sum(tempmat_alpha * t(tempmat_alpha))
+  #Fisher information matrix
+  return(array(c(-D2rhoLL,-DalpDrhoLL,-DalpDrhoLL,-D2alpLL), dim=c(2,2)))
+}
