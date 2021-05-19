@@ -229,29 +229,29 @@ Fisher_Info = function(ppp, DPPfamily, alpha_est, edgecorr=FALSE, Max_Trunc=50){
   if (!edgecorr){
     M = as.matrix(dist(t(rbind(ppp$x, ppp$y)), method = "euclidean", diag = TRUE, upper = TRUE, p = 2))}
   else {
-    if (Win$type == "rectangle") {M = pairdist(ppp, periodic=TRUE)}
+    if (ppp$window$type == "rectangle") {M = pairdist(ppp, periodic=TRUE)}
     else {  
       stop('Edge correction for the Fisher information matrix not implemented for non-rectangular windows.')
     }
   }
   
   #Loading the various quantities used in the derivatives of the log-likelihood
-  N = L0(rho,alpha,M)
-  DalpN = DalpL0(rho,alpha,M)
-  DrhoN = DrhoL0(rho,alpha,M)
-  D2alpN = D2alpL0(rho,alpha,M)
-  D2rhoN = D2rhoL0(rho,alpha,M)
-  DalpDrhoN = DalpDrhoL0(rho,alpha,M)
+  N = L0(rho, alpha, M, Max_Trunc)
+  DalpN = DalpL0(rho, alpha, M, Max_Trunc)
+  DrhoN = DrhoL0(rho, alpha, M, Max_Trunc)
+  D2alpN = D2alpL0(rho, alpha, M, Max_Trunc)
+  D2rhoN = D2rhoL0(rho, alpha, M, Max_Trunc)
+  DalpDrhoN = DalpDrhoL0(rho, alpha, M, Max_Trunc)
   invN = solve(N)
   tempmat_alpha = DalpN %*% invN
   tempmat_rho = DrhoN %*% invN
   
   #2nd derivative of the log-likelihood with respect to rho
-  D2rhoLL = vol * D2rhoInteg(rho,alpha) + sum(D2rhoN * invN) - sum(tempmat_rho * t(tempmat_rho))
+  D2rhoLL = vol * D2rhoInteg(rho, alpha, Max_Trunc) + sum(D2rhoN * invN) - sum(tempmat_rho * t(tempmat_rho))
   #Derivative of the log-likelihood with respect to rho and alpha
-  DalpDrhoLL = vol * DalpDrhoInteg(rho,alpha) + sum(DalpDrhoN * invN) - sum(tempmat_alpha * t(tempmat_rho))
+  DalpDrhoLL = vol * DalpDrhoInteg(rho, alpha, Max_Trunc) + sum(DalpDrhoN * invN) - sum(tempmat_alpha * t(tempmat_rho))
   #2nd derivative of the log-likelihood with respect to alpha
-  D2alpLL = vol * D2alpInteg(rho,alpha) + sum(D2alpN * invN) - sum(tempmat_alpha * t(tempmat_alpha))
+  D2alpLL = vol * D2alpInteg(rho, alpha, Max_Trunc) + sum(D2alpN * invN) - sum(tempmat_alpha * t(tempmat_alpha))
   #Fisher information matrix
   return(array(c(-D2rhoLL,-DalpDrhoLL,-DalpDrhoLL,-D2alpLL), dim=c(2,2)))
 }
