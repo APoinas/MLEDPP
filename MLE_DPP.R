@@ -1,5 +1,6 @@
 library(spatstat)
 library(stats)
+source("LL_derivatives.R")
 
 ############################### General MLE function ################################
 
@@ -211,15 +212,7 @@ newM.nonrectangular_edgecorrection = function(Nmax, M, bdist){
 Fisher_Info = function(ppp, DPPfamily, alpha_est, edgecorr=FALSE, Max_Trunc=50){
   if (DPPfamily == "WM" | DPPfamily == "Whittle-Matern"){
     stop('Fisher information not implemented for the Whittle-Matern family')}
-  
-  #Loading the functions giving the derivatives of the log-likelihood
-  File_with_LL_derivatives = paste("LL_derivatives/", DPPfamily, ".R", sep="")
-  if (file.exists(File_with_LL_derivatives)){
-    source(File_with_LL_derivatives)
-  } else {
-    stop('Files with the log likelihood derivatives not found. Make sure you are in the right working directory.')
-  }
-  
+
   #Estimated parameters
   vol = area(ppp$window)
   rho = ppp$n / vol
@@ -236,22 +229,22 @@ Fisher_Info = function(ppp, DPPfamily, alpha_est, edgecorr=FALSE, Max_Trunc=50){
   }
   
   #Loading the various quantities used in the derivatives of the log-likelihood
-  N = L0(rho, alpha, M, Max_Trunc)
-  DalpN = DalpL0(rho, alpha, M, Max_Trunc)
-  DrhoN = DrhoL0(rho, alpha, M, Max_Trunc)
-  D2alpN = D2alpL0(rho, alpha, M, Max_Trunc)
-  D2rhoN = D2rhoL0(rho, alpha, M, Max_Trunc)
-  DalpDrhoN = DalpDrhoL0(rho, alpha, M, Max_Trunc)
+  N = L0(rho, alpha, DPPfamily, M, Max_Trunc)
+  DalpN = DalpL0(rho, alpha, DPPfamily, M, Max_Trunc)
+  DrhoN = DrhoL0(rho, alpha, DPPfamily, M, Max_Trunc)
+  D2alpN = D2alpL0(rho, alpha, DPPfamily, M, Max_Trunc)
+  D2rhoN = D2rhoL0(rho, alpha, DPPfamily, M, Max_Trunc)
+  DalpDrhoN = DalpDrhoL0(rho, alpha, DPPfamily, M, Max_Trunc)
   invN = solve(N)
   tempmat_alpha = DalpN %*% invN
   tempmat_rho = DrhoN %*% invN
   
   #2nd derivative of the log-likelihood with respect to rho
-  D2rhoLL = vol * D2rhoInteg(rho, alpha, Max_Trunc) + sum(D2rhoN * invN) - sum(tempmat_rho * t(tempmat_rho))
+  D2rhoLL = vol * D2rhoInteg(rho, alpha, DPPfamily, Max_Trunc) + sum(D2rhoN * invN) - sum(tempmat_rho * t(tempmat_rho))
   #Derivative of the log-likelihood with respect to rho and alpha
-  DalpDrhoLL = vol * DalpDrhoInteg(rho, alpha, Max_Trunc) + sum(DalpDrhoN * invN) - sum(tempmat_alpha * t(tempmat_rho))
+  DalpDrhoLL = vol * DalpDrhoInteg(rho, alpha, DPPfamily, Max_Trunc) + sum(DalpDrhoN * invN) - sum(tempmat_alpha * t(tempmat_rho))
   #2nd derivative of the log-likelihood with respect to alpha
-  D2alpLL = vol * D2alpInteg(rho, alpha, Max_Trunc) + sum(D2alpN * invN) - sum(tempmat_alpha * t(tempmat_alpha))
+  D2alpLL = vol * D2alpInteg(rho, alpha, DPPfamily, Max_Trunc) + sum(D2alpN * invN) - sum(tempmat_alpha * t(tempmat_alpha))
   #Fisher information matrix
   return(array(c(-D2rhoLL,-DalpDrhoLL,-DalpDrhoLL,-D2alpLL), dim=c(2,2)))
 }
