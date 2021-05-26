@@ -97,3 +97,13 @@ F3 = unname(templist[3,])
 
 Check_List = readRDS(paste("results/Fisher/Result_Bessel_",toString(alpha0*100),"e-2_[0_",toString(S_length),"].dat",sep=""))
 print(c(mean((F1-Check_List$Fisher_1_1[1:n])^2),mean((F2-Check_List$Fisher_1_2[1:n])^2),mean((F3-Check_List$Fisher_2_2[1:n])^2)))
+
+###############Final Check##################
+rho0 = 100
+alpha0 = 0.03
+S_length = 1
+nb_core = 7
+Simu = readRDS(paste("datasets/2000_Gauss_",toString(rho0),"_",toString(alpha0*100),"e-2_[0_",toString(S_length),"].dat",sep=""))
+n = 50
+
+TTT = MLEDPP(Simu[[1]], "Gauss", edgecorr=FALSE, Variance_Estimation=TRUE)

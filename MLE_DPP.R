@@ -4,7 +4,7 @@ source("LL_derivatives.R")
 
 ############################### General MLE function ################################
 
-MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Trunc=50){
+MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Trunc=50, Variance_Estimation=FALSE){
   if (!is.ppp(ppp)){
     stop('First argument is not of the ppp type.')}
   if (!(DPPfamily %in% c("Gauss", "Bessel", "Cauchy", "Whittle-Matern", "WM"))){
@@ -169,6 +169,25 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
   DPPfam$fixedpar$lambda = rho_est
   DPPfam$fixedpar$alpha = alpha_est
   
+  if (Variance_Estimation){
+    if (DPPfamily == "WM" | DPPfamily == "Whittle-Matern"){
+      warning('Fisher information not implemented for the Whittle-Matern family')}
+    else{
+      if (DPPfamily=="Gauss" | DPPfamily=="Cauchy"){
+        rho_var = rho_est*(1 - rho_est * pi * alpha_est^2 / 2)/vol
+      }
+      if (DPPfamily=="Bessel"){
+        rho_var = rho_est*(1 - rho_est * pi * alpha_est^2)/vol
+      }
+      range_rho = 1.96 * sqrt(rho_var)
+      
+      Fisher = Fisher_Info(ppp, DPPfamily, alpha_est, edgecorr=edgecorr, Max_Trunc=Trunc)
+      range_alpha = 1.96 * sqrt(1/(Fisher[2,2]-((Fisher[1,2]^2)/Fisher[1,1])))
+      DPPfam$ICpar$lambda = c(rho_est-range_rho, rho_est+range_rho)
+      DPPfam$ICpar$alpha = c(alpha_est-range_alpha, alpha_est+range_alpha)
+    }
+  }
+  
   return(DPPfam)
 }
 
@@ -210,9 +229,6 @@ newM.nonrectangular_edgecorrection = function(Nmax, M, bdist){
 ##### (Experimental) Variance estimation using Fisher's information matrix #####
 
 Fisher_Info = function(ppp, DPPfamily, alpha_est, edgecorr=FALSE, Max_Trunc=50){
-  if (DPPfamily == "WM" | DPPfamily == "Whittle-Matern"){
-    stop('Fisher information not implemented for the Whittle-Matern family')}
-
   #Estimated parameters
   vol = area(ppp$window)
   rho = ppp$n / vol
