@@ -8,8 +8,8 @@ library(parallel)
 
 source("MLE_DPP.R") #Load the DPP function, make sure it is in the working directory.
 
-###############################Exemples of using the function MLEDPP#################################
-#####On a rectangular window#####
+############################### Examples of using the function MLEDPP #################################
+##### On a rectangular window #####
 #Gauss
 rho0 = 100
 alpha0 = 0.03
@@ -47,7 +47,7 @@ plot(S)
 
 MLEDPP(S, "WM", edgecorr=TRUE, sigma=2)
 
-#####On an R-shaped window#####
+##### On an R-shaped window #####
 rho0 = 100
 alpha0 = 0.05
 Simu = readRDS(paste("datasets/100_Gauss_", toString(alpha0*100), "e-2_letterR.dat", sep=""))
@@ -57,9 +57,8 @@ plot(S)
 MLEDPP(S, "Gauss", edgecorr=FALSE)
 MLEDPP(S, "Gauss", edgecorr=TRUE)
 
-
-###############################Comparison between estimators#################################
-#####Gauss#####
+############################### Comparison between estimators #################################
+##### Gauss #####
 rho0 = 100
 alpha0 = 0.05
 S_length = 1
@@ -106,7 +105,7 @@ c(10^4*mean((T_MLE_corr-alpha0)^2), 10^4*mean((T_MLE-alpha0)^2), 10^4*mean((T_pc
 all_data = data.frame(MLE_not_corrected = T_MLE, MLE_corrected = T_MLE_corr , MCE_with_g = T_pcf , MCE_with_K = T_K)
 saveRDS(all_data ,paste("results/Result_Gauss_", toString(alpha0*100), "e-2_[0_", toString(S_length), "].dat", sep=""))
 
-#####Bessel#####
+##### Bessel #####
 rho0 = 100
 alpha0 = 0.05
 S_length = 2
@@ -153,7 +152,7 @@ c(10^4*mean((T_MLE_corr-alpha0)^2), 10^4*mean((T_MLE-alpha0)^2), 10^4*mean((T_pc
 all_data = data.frame(MLE_not_corrected = T_MLE, MLE_corrected = T_MLE_corr , MCE_with_g = T_pcf , MCE_with_K = T_K)
 saveRDS(all_data ,paste("results/Result_Bessel_", toString(alpha0*100), "e-2_[0_", toString(S_length), "].dat", sep=""))
 
-#####Cauchy#####
+##### Cauchy #####
 rho0 = 100
 alpha0 = 0.02
 S_length = 1
@@ -200,7 +199,7 @@ c(10^4*mean((T_MLE_corr-alpha0)^2), 10^4*mean((T_MLE-alpha0)^2), 10^4*mean((T_pc
 all_data = data.frame(MLE_not_corrected = T_MLE, MLE_corrected = T_MLE_corr , MCE_with_g = T_pcf , MCE_with_K = T_K)
 saveRDS(all_data ,paste("results/Result_Cauchy_", toString(alpha0*1000), "e-3_[0_", toString(S_length), "].dat", sep=""))
 
-#####Whittle-Matérn#####
+##### Whittle-Matérn #####
 rho0 = 100
 alpha0 = 0.015
 S_length = 1
@@ -247,7 +246,7 @@ c(10^4*mean((T_MLE_corr-alpha0)^2), 10^4*mean((T_MLE-alpha0)^2), 10^4*mean((T_pc
 all_data = data.frame(MLE_not_corrected = T_MLE, MLE_corrected = T_MLE_corr , MCE_with_g = T_pcf , MCE_with_K = T_K)
 saveRDS(all_data ,paste("results/Result_Matern_", toString(alpha0*1000), "e-3_[0_", toString(S_length), "].dat", sep=""))
 
-#####On an R-shaped window#####
+##### On an R-shaped window #####
 rho0 = 100
 alpha0 = 0.05
 nb_core = 7
@@ -292,7 +291,8 @@ c(10^4*mean((T_MLE_corr-alpha0)^2), 10^4*mean((T_MLE-alpha0)^2), 10^4*mean((T_pc
 #Saving data
 all_data = data.frame(MLE_not_corrected = T_MLE, MLE_corrected = T_MLE_corr , MCE_with_g = T_pcf , MCE_with_K = T_K)
 saveRDS(all_data ,paste("results/Result_Gauss_", toString(alpha0*100), "e-2_letterR.dat", sep=""))
-##############################################Plotting all results##########################################################
+
+############################################## Plotting all results ##########################################################
 
 #Gauss
 par(mfrow=c(3,3), mar=c(1, 2.5, 2, 1))
