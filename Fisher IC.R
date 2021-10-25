@@ -8,8 +8,13 @@ library(parallel)
 
 source("MLE_DPP.R") #Load the DPP function, make sure it is in the working directory.
 
+############################################################################################################
 ############################### Examples of using the function Fisher_Info #################################
-#Gauss
+############################################################################################################
+
+##################
+##### Gauss #####
+##################
 rho0 = 100
 alpha0 = 0.03
 S_length = 2
@@ -21,7 +26,9 @@ I_fisher = Fisher_Info(S, "Gauss", alpha_est, edgecorr=TRUE)
 Range_IC = 1.96 * sqrt(1/(I_fisher[2,2]-((I_fisher[1,2]^2)/I_fisher[1,1])))
 print(paste("95% confidence Interval for the estimation of alpha:[", round(alpha_est - Range_IC, 3), " , ", round(alpha_est + Range_IC, 3), "]"))
 
-#Bessel
+##################
+##### Bessel #####
+##################
 rho0 = 100
 alpha0 = 0.03
 S_length = 2
@@ -33,7 +40,9 @@ I_fisher = Fisher_Info(S, "Bessel", alpha_est, edgecorr=TRUE)
 Range_IC = 1.96 * sqrt(1/(I_fisher[2,2]-((I_fisher[1,2]^2)/I_fisher[1,1])))
 print(paste("95% confidence Interval for the estimation of alpha:[", round(alpha_est - Range_IC, 3), " , ", round(alpha_est + Range_IC, 3), "]"))
 
-#Cauchy
+##################
+##### Cauchy #####
+##################
 rho0 = 100
 alpha0 = 0.02
 S_length = 2
@@ -45,8 +54,13 @@ I_fisher = Fisher_Info(S, "Cauchy", alpha_est, edgecorr=TRUE)
 Range_IC = 1.96 * sqrt(1/(I_fisher[2,2]-((I_fisher[1,2]^2)/I_fisher[1,1])))
 print(paste("95% confidence Interval for the estimation of alpha:[", round(alpha_est - Range_IC, 3), " , ", round(alpha_est + Range_IC, 3), "]"))
 
+####################################################################################################################
 ############################### Testing the correctness of the confidence interval #################################
-#####Gauss#####
+####################################################################################################################
+
+##################
+##### Gauss #####
+##################
 rho0 = 100
 alpha0 = 0.03
 S_length = 1
@@ -78,7 +92,7 @@ F2 = unname(templist[2,])
 F3 = unname(templist[3,])
 
 #Saving the obtained data
-all_data = data.frame(rho_est=Intens, alpha_est=T, Fisher_1_1=F1, Fisher_1_2=F2, Fisher_2_2=F3)
+all_data = data.frame(alpha_est=old_result, Fisher_1_1=F1, Fisher_1_2=F2, Fisher_2_2=F3)
 saveRDS(all_data ,paste("results/Fisher/Result_Gauss_",toString(alpha0*100),"e-2_[0_",toString(S_length),"].dat",sep=""))
 
 #Number of correct IC for the estimate of alpha using the full information matrix
@@ -90,7 +104,9 @@ F3 = F3[F3>0]
 range = 1.96 * sqrt(1/(F3-((F2^2)/F1)))
 print(paste(100*sum(alpha0 <= alpha_est_list+range & alpha0 >= alpha_est_list-range)/n, "% of the confidence intervals contains the true value of alpha"))
 
-#####Bessel#####
+##################
+##### Bessel #####
+##################
 rho0 = 100
 alpha0 = 0.03
 S_length = 1
@@ -122,7 +138,7 @@ F2 = unname(templist[2,])
 F3 = unname(templist[3,])
 
 #Saving the obtained data
-all_data = data.frame(rho_est=Intens, alpha_est=T, Fisher_1_1=F1, Fisher_1_2=F2, Fisher_2_2=F3)
+all_data = data.frame(alpha_est=old_result, Fisher_1_1=F1, Fisher_1_2=F2, Fisher_2_2=F3)
 saveRDS(all_data ,paste("results/Fisher/Result_Bessel_",toString(alpha0*100),"e-2_[0_",toString(S_length),"].dat",sep=""))
 
 #Number of correct IC for the estimate of alpha using the full information matrix
@@ -167,7 +183,7 @@ F1 = unname(templist[1,])
 F2 = unname(templist[2,])
 F3 = unname(templist[3,])
 
-all_data = data.frame(rho_est=Intens, alpha_est=T, Fisher_1_1=F1, Fisher_1_2=F2, Fisher_2_2=F3)
+all_data = data.frame(alpha_est=old_result, Fisher_1_1=F1, Fisher_1_2=F2, Fisher_2_2=F3)
 saveRDS(all_data ,paste("results/Fisher/Result_Cauchy_",toString(alpha0*1000),"e-3_[0_",toString(S_length),"].dat",sep=""))
 
 #Number of correct IC for the estimate of alpha using the full information matrix
@@ -179,6 +195,41 @@ F3 = F3[F3>0]
 range = 1.96 * sqrt(1/(F3-((F2^2)/F1)))
 print(paste(100*sum(alpha0 <= alpha_est_list+range & alpha0 >= alpha_est_list-range)/n, "% of the confidence intervals contains the true value of alpha"))
 
-
-
+##############################################################################################################################
 ############################################## Printing the results ##########################################################
+##############################################################################################################################
+kernel_type = c()
+window_length = c()
+true_alpha = c()
+success_percent = c()
+undefined_percent = c()
+n = 500
+
+for (kernel_name in c("Gauss", "Bessel", "Cauchy")){
+  for (win_length in 1:3){
+    for (i in 1:3){
+      if (kernel_name=="Cauchy"){alpha_star = c(0.005,0.02,0.035)[i]} else {alpha_star = c(0.01,0.03,0.05)[i]}
+      kernel_type = c(kernel_type, kernel_name)
+      window_length = c(window_length, win_length)
+      true_alpha = c(true_alpha, alpha_star)
+      if (kernel_name=="Cauchy"){
+        dat = readRDS(paste("results/Fisher/Result_Cauchy_",toString(alpha_star*1000),"e-3_[0_",toString(win_length),"].dat",sep=""))
+      } else {
+        dat = readRDS(paste("results/Fisher/Result_",kernel_name,"_",toString(alpha_star*100),"e-2_[0_",toString(win_length),"].dat",sep=""))
+      }
+      alpha_est_list = dat$alpha_est
+      F1 = dat$Fisher_1_1
+      F2 = dat$Fisher_1_2
+      F3 = dat$Fisher_2_2
+      undefined_percent = c(undefined_percent, 100*sum(F3<=0)/n)
+      alpha_est_list = alpha_est_list[F3>0]
+      F1 = F1[F3>0]
+      F2 = F2[F3>0]
+      F3 = F3[F3>0]
+      range = 1.96 * sqrt(1/(F3-((F2^2)/F1)))
+      success_percent = c(success_percent, 100*sum(alpha_star <= alpha_est_list+range & alpha_star >= alpha_est_list-range)/n)
+    }
+  }
+}
+
+all_results = data.frame(kernel_type=kernel_type, window_length=window_length, true_alpha=true_alpha, success_percent=success_percent, undefined_percent=undefined_percent)
