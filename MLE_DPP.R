@@ -2,7 +2,9 @@ library(spatstat)
 library(stats)
 source("LL_derivatives.R")
 
+#####################################################################################
 ############################### General MLE function ################################
+#####################################################################################
 
 MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Trunc=50, Variance_Estimation=FALSE){
   if (!is.ppp(ppp)){
@@ -191,7 +193,9 @@ MLEDPP = function(ppp, DPPfamily, startpar=NULL, sigma=NULL, edgecorr=FALSE, Tru
   return(DPPfam)
 }
 
+######################################################################
 ##### (Experimental) Edge correction for non-rectangular windows #####
+######################################################################
 
 newM.nonrectangular_edgecorrection = function(Nmax, M, bdist){
   l = dim(M)[1]
@@ -226,7 +230,9 @@ newM.nonrectangular_edgecorrection = function(Nmax, M, bdist){
   return(Mnew)
 }
 
+################################################################################
 ##### (Experimental) Variance estimation using Fisher's information matrix #####
+################################################################################
 
 Fisher_Info = function(ppp, DPPfamily, alpha_est, edgecorr=FALSE, Max_Trunc=50){
   #Estimated parameters

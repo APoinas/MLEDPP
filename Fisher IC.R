@@ -108,7 +108,7 @@ print(paste(100*sum(alpha0 <= alpha_est_list+range & alpha0 >= alpha_est_list-ra
 ##### Bessel #####
 ##################
 rho0 = 100
-alpha0 = 0.03
+alpha0 = 0.05
 S_length = 1
 nb_core = 7
 Simu = readRDS(paste("datasets/2000_Bessel_",toString(rho0),"_",toString(alpha0*100),"e-2_[0_",toString(S_length),"].dat",sep=""))

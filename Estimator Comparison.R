@@ -8,9 +8,15 @@ library(parallel)
 
 source("MLE_DPP.R") #Load the DPP function, make sure it is in the working directory.
 
+#######################################################################################################
 ############################### Examples of using the function MLEDPP #################################
+#######################################################################################################
+
+###################################
 ##### On a rectangular window #####
-#Gauss
+###################################
+
+### Gauss ###
 rho0 = 100
 alpha0 = 0.03
 S_length = 2
@@ -20,7 +26,7 @@ plot(S)
 MLEDPP(S, "Gauss", edgecorr=FALSE)
 MLEDPP(S, "Gauss", edgecorr=TRUE)
 
-#Bessel
+### Bessel ###
 rho0 = 100
 alpha0 = 0.03
 S_length = 2
@@ -29,7 +35,7 @@ plot(S)
 
 MLEDPP(S, "Bessel", edgecorr=TRUE)
 
-#Cauchy
+### Cauchy ###
 rho0 = 100
 alpha0 = 0.02
 S_length = 2
@@ -38,7 +44,7 @@ plot(S)
 
 MLEDPP(S, "Cauchy", edgecorr=TRUE)
 
-#Whittle-Matern
+### Whittle-Matern ###
 rho0 = 100
 alpha0 = 0.015
 S_length = 2
@@ -47,7 +53,10 @@ plot(S)
 
 MLEDPP(S, "WM", edgecorr=TRUE, sigma=2)
 
+#################################
 ##### On an R-shaped window #####
+#################################
+
 rho0 = 100
 alpha0 = 0.05
 Simu = readRDS(paste("datasets/100_Gauss_", toString(alpha0*100), "e-2_letterR.dat", sep=""))
@@ -57,7 +66,10 @@ plot(S)
 MLEDPP(S, "Gauss", edgecorr=FALSE)
 MLEDPP(S, "Gauss", edgecorr=TRUE)
 
+###############################################################################################
 ############################### Comparison between estimators #################################
+###############################################################################################
+
 ##### Gauss #####
 rho0 = 100
 alpha0 = 0.05
@@ -292,9 +304,11 @@ c(10^4*mean((T_MLE_corr-alpha0)^2), 10^4*mean((T_MLE-alpha0)^2), 10^4*mean((T_pc
 all_data = data.frame(MLE_not_corrected = T_MLE, MLE_corrected = T_MLE_corr , MCE_with_g = T_pcf , MCE_with_K = T_K)
 saveRDS(all_data ,paste("results/Result_Gauss_", toString(alpha0*100), "e-2_letterR.dat", sep=""))
 
+##############################################################################################################################
 ############################################## Plotting all results ##########################################################
+##############################################################################################################################
 
-#Gauss
+### Gauss ###
 par(mfrow=c(3,3), mar=c(1, 2.5, 2, 1))
 cmain = 2.5
 caxis = 1.5
@@ -310,7 +324,7 @@ for (wind in c(1,2,3)){
     abline(h=0, col="red", lty=2, lwd=lwd)
     axis(2, cex.axis=caxis)}}
 
-#Bessel
+### Bessel ###
 par(mfrow=c(3,3), mar=c(1, 2.5, 2, 1))
 cmain = 2.5
 caxis = 1.5
@@ -326,7 +340,7 @@ for (wind in c(1,2,3)){
     abline(h=0, col="red", lty=2, lwd=lwd)
     axis(2, cex.axis=caxis)}}
 
-#Cauchy
+#### Cauchy ###
 par(mfrow=c(3,3), mar=c(1, 2.5, 2, 1))
 cmain = 2.5
 caxis = 1.5
@@ -342,7 +356,7 @@ for (wind in c(1,2,3)){
     abline(h=0, col="red", lty=2, lwd=lwd)
     axis(2, cex.axis=caxis)}}
 
-#Whittle-Matérn
+### Whittle-Matérn ###
 par(mfrow=c(1,2), mar=c(1, 2.5, 2, 1))
 cmain = 2.5
 caxis = 1.5
@@ -358,7 +372,7 @@ for (wind in c(1,2)){
   abline(h=0, col="red", lty=2, lwd=lwd)
   axis(2, cex.axis=caxis)}
 
-#Gauss (R-shaped window)
+### Gauss (R-shaped window) ###
 par(mfrow=c(1,3), mar=c(1, 2.5, 2, 1))
 cmain = 2.5
 caxis = 1.5
