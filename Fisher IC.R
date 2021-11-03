@@ -233,3 +233,4 @@ for (kernel_name in c("Gauss", "Bessel", "Cauchy")){
 }
 
 all_results = data.frame(kernel_type=kernel_type, window_length=window_length, true_alpha=true_alpha, success_percent=success_percent, undefined_percent=undefined_percent)
+print(all_results)
